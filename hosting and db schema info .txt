@@ -1,0 +1,79 @@
+Maria db :
+     sudo yum install eprl-release
+     sudo yum install gcc
+     sudo yum install mariadb
+     sudo yum install mariadb-devel
+
+     sudo systemctl start mariadb
+     sudo systemctl enable mariadb
+
+     sudo mysql_secure_installation
+
+     mysql -u root -p 
+         will ask for the root password hit enter keep it empty and ans the question correctly
+    
+    create database djangoProject;
+    
+    here port will will be 3306 user root password null ip 127.0.0.1
+
+
+Gunicorn service settings:
+
+   sudo vi /etc/systemd/system/gunicorn.service
+       add this:
+      
+        [Unit]
+        Description = gunicorn daemon
+        After = network.target
+
+        [Service]
+        User = vagrant
+        Group = nginx
+        WorkingDirectory= /home/vagrant/djangoProject
+        ExecStart = /home/vagrant/djangoProject/djangoenv/bin/gunicorn --workers 3 --bind unix:/home/vagrant/djangoProject/djangoProject.sock djangoProject.wsgi:application
+
+        [Install]
+        WantedBy = multi-user.target
+
+    sudo systemctl start gunicorn.service
+    sudo systemctl enable gunicorn.service
+
+Nginx service settings:
+
+     sudo vi /etc/nginx/nginx.conf
+        append following:
+
+          server{
+        listen  80;
+        server_name  192.133.33.33;
+
+        location = /favicon.ico{ access_log off; log_not_found off; }
+        location /static/ {
+             root /home/vagrant/djangoProject;
+         }
+
+        location / {
+            proxy_set_header Host $http_host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            proxy_pass http://unix:/home/vagrant/djangoProject/djangoProject.sock;
+        }
+        }
+    
+    sudo usermod -a -G vagrant nginx
+    sudo chmod 777 /home/vagrant/djangoProject
+
+    sudo  chown vagrant:nginx /home/vagrant/djangoProject
+    sudo nginx -t
+
+    sudo systemctl start nginx.service
+    sudo systemctl enable nginx.service
+
+    
+
+
+     
+
+
+

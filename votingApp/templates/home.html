@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="../static/css/bootstrap.css" rel="stylesheet" type="text/css" media="all">
+  <link href="../static/css/bootstrap.min.css" rel="stylesheet" type="text/css" media="all">
+  <link href="../static/css/bootstrap-grid.css" rel="stylesheet" type="text/css" media="all">
+  <link href="../static/css/bootstrap-grid.min.css" rel="stylesheet" type="text/css" media="all">
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+  <title>Votessss</title>
+</head>
+
+<body>
+  <!-- As a heading -->
+  <nav class="navbar navbar-light bg-dark">
+    <span class="navbar-brand mb-0 h1 text-light">LetsVote !! </span>
+  </nav>
+  <div class="container">
+
+    <div class="row">
+      <div class="col">
+        </br></br>
+        <h1 class="display-4">Hello, Its Pranav </h1>
+        <p class="lead">Aab ki bar kiski sarkar ..... !</p>
+        <hr class="my-4">
+        <p>“Errors do not cease to be errors simply because they’re ratified into law.”</p>
+        <p>“Every election is determined by the people who show up.”</p>
+        <div class="row">
+          <div class="col">
+            <form class="form-inline" method="POST" action="/vote" enctype="multipart/form-data">
+              {% csrf_token %}
+
+              <div class="form-group mx-sm-3 mb-2">
+
+                <input type="hidden" class="form-control" name="name" value="Sona">
+              </div>
+              <button type="submit" class="btn btn-primary mb-2">Vote For Sona </button>
+            </form>
+          </div>
+          <div class="col">
+            <form class="form-inline" method="POST" action="/vote" enctype="multipart/form-data">
+              {% csrf_token %}
+
+              <div class="form-group mx-sm-4 mb-2">
+
+                <input type="hidden" class="form-control" name="name" value="Panda">
+              </div>
+              <button type="submit" class="btn btn-primary mb-2 ">Vote For Panda </button>
+            </form>
+          </div>
+
+        </div>
+
+      </div>
+      <div class="col">
+        <div class="col">
+          </br></br>
+          <h1 class="display-4">Statistics. </h1>
+          <p class="lead">Aab banegii sarkar ..... !</p>
+          <hr class="my-4">
+          <p class="text-center">Sona : {{sona}} votes </p>
+          <p class="text-center">Panda : {{panda}} votes</p>
+          <p class="text-center"> {{leader}} is leading by {{lead}} votes </p>
+          <p class="text-center"> Wow ,{{leader}} jeet gaya..! </p>
+          
+        </div>
+
+        <script type="text/javascript">
+          google.charts.load("current", {
+            packages: ["corechart"]
+          });
+          google.charts.setOnLoadCallback(drawChart);
+
+          function drawChart() {
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', 'Name');
+            data.addColumn('number', 'Vote Share');
+            data.addRows( {{data|safe}} );
+
+
+            var options = {
+              title: 'Canditate Vote Shares',
+              pieHole: 0.4,
+            };
+
+            var chart = new google.visualization.PieChart(document.getElementById('donutchart'));
+            chart.draw(data, options);
+          }
+        </script>
+        <div id="donutchart" style="width: 900px; height: 390px;">
+           
+        </div>
+
+
+      </div>
+    </div>
+
+  </div>
+
+</body>
+
+</html>
